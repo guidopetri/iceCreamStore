@@ -37,6 +37,10 @@ class iceCream():
 		else:
 			raise ValueError("we don't have that much ice cream!")
 
+class sundae():
+	def __init__(self,iceCreamsDict):
+		self.iceCreamsDict = iceCreamsDict
+
 def isNumber(string):
 	if re.match(r'^\d+(\.\d+)?$',string):
 		return True
@@ -76,25 +80,97 @@ def sellIceCream(tub,price):
 		print(traceback.format_exc())
 	return income
 
+def createSundae():
+	print([(x.flavor.name,x.quantity) for x in iceCreamTubs if not x.empty])
+	iceCreamToCombine1 = input("which ice cream would you like to combine?\n")
+	try:
+		iceCreamToCombine1 = int(iceCreamToCombine1)
+	except ValueError:
+		pass
+	while True:
+			try:
+				test = iceCreamTubs[iceCreamToCombine1-1]
+				break;
+			except:
+				iceCreamToCombine1 = input("sorry, try again. which ice cream would you like to combine?\n")
+				try:
+					iceCreamToCombine1 = int(iceCreamToCombine1)
+				except ValueError:
+					pass
+	amount1 = input("how much of %s ice cream?"%iceCreamTubs[iceCreamToCombine1-1].flavor.name)
+	try:
+		amount1 = int(amount1)
+	except ValueError:
+		pass
+	while amount1 > iceCreamTubs[iceCreamToCombine1].quantity:
+		amount1 = input("sorry, you don't have that much %s ice cream. how much instead?"%iceCreamTubs[iceCreamToCombine1-1].flavor.name)
+		try:
+			amount1 = int(amount1)
+		except ValueError:
+			pass
+	iceCreamToCombine2 = input("which other ice cream would you like to combine?\n")
+	try:
+		iceCreamToCombine2 = int(iceCreamToCombine2)
+	except ValueError:
+		pass
+	while True:
+			try:
+				test = iceCreamTubs[iceCreamToCombine2-1]
+				break;
+			except:
+				iceCreamToCombine2 = input("sorry, try again. which ice cream would you like to combine?\n")
+				try:
+					iceCreamToCombine2 = int(iceCreamToCombine2)
+				except ValueError:
+					pass
+	amount2 = input("how much of %s ice cream?"%iceCreamTubs[iceCreamToCombine2-1].flavor.name)
+	try:
+		amount2 = int(amount2)
+	except ValueError:
+		pass
+	while amount2 > iceCreamTubs[iceCreamToCombine2].quantity:
+		amount2 = input("sorry, you don't have that much %s ice cream. how much instead?"%iceCreamTubs[iceCreamToCombine2-1].flavor.name)
+		try:
+			amount2 = int(amount2)
+		except ValueError:
+			pass
+	return sundae({iceCreamTubs[iceCreamToCombine1-1]:amount1,iceCreamTubs[iceCreamToCombine2-1]:amount2})
+
+def sellSundae(sundaeToSell,price):
+	income = 0
+	for value in sundaeToSell.iceCreamsDict.values():
+		income += value*price*1.5
+	return income
+
 money = 5.0
 iceCreamTubs = []
+sundaesDict = {}
 while True:
 	print("you have %s cash left"%money)
 	price = random.randrange(1,5)/2
-	choice = input("what would you like to do?\n1. buy ice cream\n2. sell ice cream for %s\n3. quit\n"%price)
-	if choice not in ['1','2','3']:
+	choice = input("what would you like to do?\n1. buy ice cream\n2. sell ice cream for %s\n3. quit\n4. create sundae\n5. sell sundae\n"%price)
+	if choice not in ['1','2','3','4','5']:
 		choice = input("try again\n")
 	if choice == '1':
 		iceCreamTubs.append(buyIceCream())
 		money -=1
 	elif choice == '2':
-		try:
-			money += sellIceCream([x for x in iceCreamTubs if not x.empty][0],price)
-		except IndexError:
-			print("you don't have any ice cream to sell!")
+		print([(x.flavor.name,x.quantity) for x in iceCreamTubs if not x.empty])
+		iceCreamToSell = input("which ice cream would you like to sell?\n")
+		while True:
+			try:
+				test = iceCreamTubs[iceCreamToSell]
+				break;
+			except IndexError:
+				iceCreamToSell = input("sorry, try again. which ice cream would you like to sell?\n")
+		money += sellIceCream(iceCreamTubs[iceCreamToSell],price)
 	elif choice == '3':
 		break;
+	elif choice == '4':
+		sundaesDict[len(sundaesDict)] = createSundae()
+	elif choice == '5':
+		money += sellSundae(sundaesDict[len(sundaesDict)-1],price)
 
-print("you ate all the ice cream!")
+print("you sold all the ice cream!")
 
 sys.exit()
