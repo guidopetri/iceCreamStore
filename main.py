@@ -7,7 +7,16 @@ import re
 import sys
 import traceback
 import random
+import PyQt5.QtWidgets
+import PyQt5.QtCore
+import PyQt5.QtGui
+import json
 
+try:
+	with open('money.ini','r') as file:
+		money = json.loads(file.read())
+except:
+	money = 5.0
 random.seed(1)
 
 class FlavorNames(Enum):
@@ -142,7 +151,6 @@ def sellSundae(sundaeToSell,price):
 		income += value*price*1.5
 	return income
 
-money = 5.0
 iceCreamTubs = []
 sundaesDict = {}
 while True:
@@ -170,7 +178,8 @@ while True:
 		sundaesDict[len(sundaesDict)] = createSundae()
 	elif choice == '5':
 		money += sellSundae(sundaesDict[len(sundaesDict)-1],price)
-
-print("you sold all the ice cream!")
+with open('money.ini','w') as file:
+	json.dump(money,file)
+print("exiting!")
 
 sys.exit()
