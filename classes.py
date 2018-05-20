@@ -38,6 +38,7 @@ class iceCream():
 		return
 
 class sundae():
-	def __init__(self,iceCreamsDict):
+	def __init__(self,iceCreamsDict,count):
 		self.iceCreamsDict = iceCreamsDict
+		self.count = count
 		return
